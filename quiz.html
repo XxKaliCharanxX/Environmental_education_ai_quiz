@@ -315,7 +315,7 @@
         
         logoutBtn.addEventListener('click', async () => {
             await signOut(auth);
-            window.location.href = 'registration.html';
+            window.location.href = 'index.html';
         });
 
         onAuthStateChanged(auth, async (user) => {
@@ -352,7 +352,7 @@
                      startQuizBtn.disabled = true;
                 }
             } else {
-                window.location.href = 'registration.html';
+                window.location.href = 'index.html';
             }
         });
     </script>
