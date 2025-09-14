@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EcoLearn - Leaderboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #259a5a;
+            --primary-green-2: #1b8b45;
+            --header-bg: #259a5a;
+            --nav-white: #fff;
+            --muted-bg: #f4f4f9;
+            --container-max: 1200px;
+            --card-shadow: 0 12px 30px rgba(37, 154, 90, 0.06);
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding-top: 76px;
+            background-color: var(--muted-bg);
+        }
+        .container { max-width:var(--container-max); margin:0 auto; padding:0 24px; }
+        
+        .dashboard-header {
+            background: #259a5a;
+            color: #fff;
+            padding: 0;
+            box-shadow: 0 6px 18px rgba(37,154,90,0.12);
+            width: 100%;
+            position: fixed;
+            top: 0; left: 0; z-index:1100; height:76px; display:flex; align-items:center;
+        }
+        .dashboard-header .container { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+        .logo { display:flex; align-items:center; font-weight:800; gap:0.75rem; text-decoration:none; }
+        .logo svg{ margin-right:0.5rem; color: white;} .logo span{ color:#fff; font-weight:800; }
+        
+        .dashboard-nav { display:flex; gap:12px; margin-left:16px; align-items:center; }
+        .dashboard-nav a, .dashboard-nav button {
+            color:#fff; font-weight:600; text-decoration:none; padding:8px 14px; border-radius:22px;
+            background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: background 0.18s, transform 0.12s;
+        }
+        .dashboard-nav a.active, .dashboard-nav a:hover, .dashboard-nav button:hover {
+            background: rgba(255,255,255,0.12); transform: translateY(-1px);
+        }
+        .btn-secondary { background: rgba(255,255,255,0.08); color: #fff; border-radius:18px; padding:8px 12px; font-weight:700; border:1px solid rgba(255,255,255,0.06); }
+
+        main .container {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .leaderboard-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #333; }
+        .leaderboard-header p { font-size: 1.1rem; color: #666; margin-top: 0; }
+        
+        .podium-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            min-height: 180px;
+        }
+        .podium-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 150px;
+        }
+        .podium-item .avatar {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 700;
+            margin-bottom: 0.5rem;
+            border: 4px solid;
+            color: #555;
+        }
+        .podium-item.rank-1 .avatar { border-color: var(--gold); }
+        .podium-item.rank-2 .avatar { border-color: var(--silver); }
+        .podium-item.rank-3 .avatar { border-color: var(--bronze); }
+        .podium-item.rank-1 { order: 2; transform: translateY(0); }
+        .podium-item.rank-2 { order: 1; transform: translateY(-20px); }
+        .podium-item.rank-3 { order: 3; transform: translateY(-20px); }
+
+        .podium-item .username { font-weight: 600; font-size: 1.1rem; }
+        .podium-item .points { font-weight: 700; color: var(--primary-green); }
+
+
+        .leaderboard-list-container {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .leaderboard-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+        
+        .leaderboard-item:last-child { border-bottom: none; }
+        .leaderboard-item:hover { background-color: #f9f9f9; }
+        .leaderboard-item.current-user { background-color: #e8f5e9; font-weight: 700; }
+        
+        .rank {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #999;
+            width: 50px;
+        }
+        .username { flex-grow: 1; font-size: 1.1rem; font-weight: 500; }
+        .points { font-size: 1.2rem; font-weight: 700; color: var(--primary-green); }
+
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="container">
+            <a href="dashboard.html" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path></svg>
+                <span>EcoLearn</span>
+            </a>
+            <nav class="dashboard-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="challenges.html">Challenges</a>
+                <a href="leaderboard.html" class="active">Leaderboard</a>
+                <a href="profile.html">Profile</a>
+                <button id="logout-btn" class="btn-secondary">Log Out</button>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="leaderboard-header">
+                <h1>Global Leaderboard</h1>
+                <p>See how you rank against all eco-warriors on the platform.</p>
+            </div>
+
+            <div id="podium-container" class="podium-container">
+                <!-- Top 3 users will be dynamically inserted here -->
+            </div>
+
+            <div class="leaderboard-list-container">
+                <ul id="leaderboard-list" class="leaderboard-list">
+                    <!-- Leaderboard items will be dynamically inserted here -->
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDWA-fiGiXOUp8QwPaldztN5cTQxWibghk",
+          authDomain: "myloginapp-212fb.firebaseapp.com",
+          projectId: "myloginapp-212fb",
+          storageBucket: "myloginapp-212fb.appspot.com",
+          messagingSenderId: "407662156233",
+          appId: "1:407662156233:web:d419bc320091e0e827018",
+          measurementId: "G-P5JY41QFSS"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const podiumContainer = document.getElementById('podium-container');
+        const leaderboardList = document.getElementById('leaderboard-list');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const profilesCollectionRef = collection(db, "profiles");
+                const q = query(profilesCollectionRef, orderBy("points", "desc"));
+                
+                try {
+                    const querySnapshot = await getDocs(q);
+
+                    podiumContainer.innerHTML = '';
+                    leaderboardList.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        leaderboardList.innerHTML = '<li>No users found yet. Be the first to get on the board!</li>';
+                        return;
+                    }
+                    
+                    const users = querySnapshot.docs;
+
+                    // Populate Podium for Top 3
+                    const topThree = users.slice(0, 3);
+                    topThree.forEach((doc, index) => {
+                        const rank = index + 1;
+                        const userData = doc.data();
+                        const podiumItem = document.createElement('div');
+                        podiumItem.classList.add('podium-item', `rank-${rank}`);
+                        podiumItem.innerHTML = `
+                            <div class="avatar">${userData.username.charAt(0).toUpperCase()}</div>
+                            <div class="username">${userData.username}</div>
+                            <div class="points">${userData.points} pts</div>
+                        `;
+                        podiumContainer.appendChild(podiumItem);
+                    });
+
+                    // Populate List for all users
+                    users.forEach((doc, index) => {
+                        const userData = doc.data();
+                        const rank = index + 1;
+                        const isCurrentUser = doc.id === user.uid;
+
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('leaderboard-item');
+                        if (isCurrentUser) {
+                            listItem.classList.add('current-user');
+                        }
+
+                        listItem.innerHTML = `
+                            <div class="rank">#${rank}</div>
+                            <div class="username">${userData.username}</div>
+                            <div class="points">${userData.points} pts</div>
+                        `;
+                        leaderboardList.appendChild(listItem);
+                    });
+
+                } catch (error) {
+                    console.error("Error fetching leaderboard:", error);
+                    leaderboardList.innerHTML = '<li>Could not load leaderboard data.</li>';
+                }
+
+            } else {
+                window.location.href = 'registration.html';
+            }
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'registration.html';
+            } catch (error) {
+                console.error("Error signing out:", error);
+            }
+        });
+    </script>
+</body>
+</html>
+

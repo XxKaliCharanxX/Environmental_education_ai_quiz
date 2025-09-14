@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoLearn - Quiz Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #259a5a;
+            --primary-green-2: #1b8b45;
+            --header-bg: #259a5a;
+            --nav-white: #fff;
+            --muted-bg: #f4f4f9;
+            --container-max: 900px;
+            --card-shadow: 0 12px 30px rgba(37, 154, 90, 0.08);
+            --correct-bg: #e8f5e9;
+            --correct-border: #4caf50;
+            --incorrect-bg: #ffebee;
+            --incorrect-border: #f44336;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding-top: 76px;
+            background-color: var(--muted-bg);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container { max-width:var(--container-max); width: 100%; margin:2rem auto; padding:0 24px; }
+        
+        .dashboard-header {
+            background: #259a5a; color: #fff; padding: 0; box-shadow: 0 6px 18px rgba(37,154,90,0.12);
+            width: 100%; position: fixed; top: 0; left: 0; z-index:1100; height:76px; display:flex; align-items:center;
+        }
+        .dashboard-header .container-nav { max-width:1200px; width:90%; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
+        .logo { display:flex; align-items:center; font-weight:800; gap:0.75rem; text-decoration:none; }
+        .logo svg{ margin-right:0.5rem; color: white;} .logo span{ color:#fff; font-weight:800; }
+        .dashboard-nav { display:flex; gap:12px; margin-left:16px; align-items:center; }
+        .dashboard-nav a, .dashboard-nav button {
+            color:#fff; font-weight:600; text-decoration:none; padding:8px 14px; border-radius:22px;
+            background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: background 0.18s, transform 0.12s;
+        }
+        .dashboard-nav a:hover, .dashboard-nav a.active { background: rgba(255,255,255,0.12); }
+        .btn-secondary { background: rgba(255,255,255,0.08); color: #fff; border-radius:18px; padding:8px 12px; font-weight:700; border:1px solid rgba(255,255,255,0.06); }
+
+
+        .quiz-wrapper {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+        }
+
+        #intro-screen h1, #results-screen h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-top: 0;
+        }
+        #intro-screen p, #results-screen p {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        .btn {
+            display: block;
+            width: 200px;
+            margin: 1.5rem auto 0;
+            padding: 1rem;
+            text-align: center;
+            background: linear-gradient(90deg, var(--primary-green), var(--primary-green-2));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(37, 154, 90, 0.2);
+        }
+        .error-message {
+            background: var(--incorrect-bg);
+            border: 1px solid var(--incorrect-border);
+            color: var(--incorrect-border);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 1rem;
+            word-break: break-word;
+        }
+
+        #quiz-screen { display: none; }
+        #question-text { font-size: 1.5rem; font-weight: 600; margin-bottom: 2rem; }
+        .options-container {
+            display: grid;
+            gap: 1rem;
+        }
+        .option {
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .option:hover { border-color: var(--primary-green); }
+        .option.selected { border-color: var(--primary-green); background: #e8f5e9; }
+        .option.correct { border-color: var(--correct-border); background: var(--correct-bg); }
+        .option.incorrect { border-color: var(--incorrect-border); background: var(--incorrect-bg); }
+        .option.disabled { pointer-events: none; opacity: 0.7; }
+
+        #results-screen { display: none; }
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="container-nav">
+            <a href="dashboard.html" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path></svg>
+                <span>EcoLearn</span>
+            </a>
+            <nav class="dashboard-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="challenges.html" class="active">Challenges</a>
+                <a href="leaderboard.html">Leaderboard</a>
+                <a href="profile.html">Profile</a>
+                <button id="logout-btn" class="btn-secondary">Log Out</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="quiz-wrapper">
+            <div id="intro-screen">
+                <h1 id="quiz-title">Loading Quiz...</h1>
+                <p>Ready to test your knowledge?</p>
+                <button id="start-quiz-btn" class="btn" disabled>Loading...</button>
+                <div id="intro-error" class="error-message" style="display: none;"></div>
+            </div>
+            <div id="quiz-screen">
+                <p id="question-text"></p>
+                <div id="options-container" class="options-container"></div>
+                <button id="next-question-btn" class="btn" style="display: none;">Next</button>
+            </div>
+            <div id="results-screen">
+                <h1>Quiz Complete!</h1>
+                <p id="results-summary"></p>
+                <a href="challenges.html" class="btn">Back to Challenges</a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyDWA-fiGiXOUp8QwPaldztN5cTQxWibghk",
+          authDomain: "myloginapp-212fb.firebaseapp.com",
+          projectId: "myloginapp-212fb",
+          storageBucket: "myloginapp-212fb.appspot.com",
+          messagingSenderId: "407662156233",
+          appId: "1:407662156233:web:d419bc320091e0e827018",
+          measurementId: "G-P5JY41QFSS"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // UI Elements
+        const introScreen = document.getElementById('intro-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const quizTitle = document.getElementById('quiz-title');
+        const introError = document.getElementById('intro-error');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        const resultsSummary = document.getElementById('results-summary');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // State
+        let currentUser = null;
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const topic = new URLSearchParams(window.location.search).get('topic');
+        let currentDifficultyLevel = 3;
+        const difficultyMap = ["Very Easy", "Easy", "Normal", "Hard", "Very Hard"];
+
+        async function fetchQuestions(numericDifficulty) {
+            startQuizBtn.textContent = 'Generating...';
+            startQuizBtn.disabled = true;
+
+            const difficultyName = difficultyMap[numericDifficulty - 1];
+            
+            try {
+                const response = await fetch('/api/get-question', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ difficulty: difficultyName, topic: topic })
+                });
+
+                if (!response.ok) {
+                    let errorMessage = `Server error: ${response.status}`;
+                    const errorText = await response.text();
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        errorMessage = errorData.error || JSON.stringify(errorData);
+                    } catch (e) {
+                         if (errorText) errorMessage = errorText;
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+                questions = await response.json();
+                return true;
+
+            } catch (error) {
+                console.error('Error fetching questions:', error);
+                introError.textContent = `Failed to generate quiz. ${error.message}`;
+                introError.style.display = 'block';
+                startQuizBtn.textContent = 'Start Quiz';
+                startQuizBtn.disabled = false;
+                return false;
+            }
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionText.textContent = question.question;
+            optionsContainer.innerHTML = '';
+            const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
+            shuffledOptions.forEach(optionText => {
+                const option = document.createElement('div');
+                option.classList.add('option');
+                option.textContent = optionText;
+                option.addEventListener('click', () => selectOption(option, optionText, question.correctAnswer));
+                optionsContainer.appendChild(option);
+            });
+            nextQuestionBtn.style.display = 'none';
+        }
+
+        function selectOption(optionElement, selectedAnswer, correctAnswer) {
+            Array.from(optionsContainer.children).forEach(child => child.classList.add('disabled'));
+
+            if (selectedAnswer === correctAnswer) {
+                optionElement.classList.add('correct');
+                score++;
+            } else {
+                optionElement.classList.add('incorrect');
+                Array.from(optionsContainer.children).forEach(child => {
+                    if (child.textContent === correctAnswer) {
+                        child.classList.add('correct');
+                    }
+                });
+            }
+            nextQuestionBtn.style.display = 'block';
+        }
+
+        async function endQuiz() {
+            quizScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+
+            const pointsEarned = score * 10;
+            let newDifficultyLevel = currentDifficultyLevel;
+
+            if (score <= 2) {
+                newDifficultyLevel = Math.max(1, currentDifficultyLevel - 1);
+            } else if (score >= 4) {
+                newDifficultyLevel = Math.min(5, currentDifficultyLevel + 1);
+            }
+
+            resultsSummary.textContent = `You scored ${score} out of 5 and earned ${pointsEarned} points. Your difficulty for this topic is now Level ${newDifficultyLevel}/5.`;
+
+            try {
+                const userProfileRef = doc(db, "profiles", currentUser.uid);
+                const updatePayload = {
+                    points: increment(pointsEarned),
+                    [`quizDifficulty.${topic}`]: newDifficultyLevel
+                };
+                await updateDoc(userProfileRef, updatePayload);
+            } catch (error) {
+                console.error("Error updating profile:", error);
+                resultsSummary.textContent += " (Could not save progress)";
+            }
+        }
+        
+        startQuizBtn.addEventListener('click', async () => {
+            const success = await fetchQuestions(currentDifficultyLevel);
+            if(success) {
+                introScreen.style.display = 'none';
+                quizScreen.style.display = 'block';
+                showQuestion();
+            }
+        });
+
+        nextQuestionBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        });
+        
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.href = 'registration.html';
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                if (!topic) {
+                    document.body.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <h1>Error: No Topic Specified</h1>
+                            <p>Please select a quiz from the Challenges page.</p>
+                            <a href="challenges.html" class="btn">Go to Challenges</a>
+                        </div>`;
+                    return;
+                }
+                
+                currentUser = user;
+                const userProfileRef = doc(db, "profiles", user.uid);
+                try {
+                    const docSnap = await getDoc(userProfileRef);
+                    if (docSnap.exists()) {
+                        const userProfile = docSnap.data();
+                        currentDifficultyLevel = userProfile.quizDifficulty?.[topic] || 3;
+                        
+                        quizTitle.textContent = `Quiz: ${topic}`;
+                        startQuizBtn.textContent = `Start Quiz (Level ${currentDifficultyLevel}/5)`;
+                        startQuizBtn.disabled = false;
+                    } else {
+                        introError.textContent = "Could not find your user profile.";
+                        introError.style.display = 'block';
+                        startQuizBtn.disabled = true;
+                    }
+                } catch(e) {
+                     introError.textContent = "Error loading your profile.";
+                     introError.style.display = 'block';
+                     startQuizBtn.disabled = true;
+                }
+            } else {
+                window.location.href = 'registration.html';
+            }
+        });
+    </script>
+</body>
+</html>
+

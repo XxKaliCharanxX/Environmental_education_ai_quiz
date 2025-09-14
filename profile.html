@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EcoLearn Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #259a5a;
+            --primary-green-2: #1b8b45;
+            --header-bg: #259a5a;
+            --nav-white: #fff;
+            --muted-bg: #f4f4f9;
+            --container-max: 1200px;
+            --card-shadow: 0 12px 30px rgba(37, 154, 90, 0.06);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding-top: 76px;
+            background-color: var(--muted-bg);
+        }
+        .container { max-width:var(--container-max); margin:0 auto; padding:0 24px; }
+        
+        .dashboard-header {
+            background: #259a5a;
+            color: #fff;
+            padding: 0;
+            box-shadow: 0 6px 18px rgba(37,154,90,0.12);
+            width: 100%;
+            position: fixed;
+            top: 0; left: 0; z-index:1100; height:76px; display:flex; align-items:center;
+        }
+        .dashboard-header .container { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+        .logo { display:flex; align-items:center; font-weight:800; gap:0.75rem; text-decoration:none; }
+        .logo svg{ margin-right:0.5rem; color: white;} .logo span{ color:#fff; font-weight:800; }
+        
+        .dashboard-nav { display:flex; gap:12px; margin-left:16px; align-items:center; }
+        .dashboard-nav a, .dashboard-nav button {
+            color:#fff; font-weight:600; text-decoration:none; padding:8px 14px; border-radius:22px;
+            background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: background 0.18s, transform 0.12s;
+        }
+        .dashboard-nav a.active, .dashboard-nav a:hover, .dashboard-nav button:hover {
+            background: rgba(255,255,255,0.12); transform: translateY(-1px);
+        }
+        
+        .btn {
+            background: linear-gradient(90deg,var(--primary-green),var(--primary-green-2));
+            color: #fff;
+            border: none;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: transform 0.12s;
+            font-weight:700;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-secondary { background: rgba(255,255,255,0.08); color: #fff; border-radius:18px; padding:8px 12px; font-weight:700; border:1px solid rgba(255,255,255,0.06); }
+
+        main .container {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            font-size: 3em;
+            margin-right: 20px;
+        }
+
+        .profile-info { flex: 1; }
+        .profile-name { font-size: 1.8em; font-weight: 600; margin: 0; }
+        .profile-meta { font-size: 0.9em; color: #999; margin-top: 10px; }
+        .profile-actions { display: flex; gap: 10px; margin-top: 15px;}
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .profile-stat {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .profile-stat-number { font-size: 1.5em; font-weight: 600; margin: 0; }
+        .profile-stat-label { font-size: 0.9em; color: #666; }
+
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="container">
+            <a href="dashboard.html" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path></svg>
+                <span>EcoLearn</span>
+            </a>
+            <nav class="dashboard-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="challenges.html">Challenges</a>
+                <a href="leaderboard.html">Leaderboard</a>
+                <a href="profile.html" class="active">Profile</a>
+                <button id="logout-btn" class="btn-secondary">Log Out</button>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="profile-card">
+                <div class="profile-avatar">👤</div>
+                <div class="profile-info">
+                    <div id="profile-name" class="profile-name">Loading...</div>
+                    <div id="profile-meta" class="profile-meta">
+                        <span>loading...</span>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn" onclick="alert('Edit Profile feature coming soon!')">Edit Profile</button>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <div id="total-points" class="profile-stat-number">0</div>
+                    <div class="profile-stat-label">Total Points</div>
+                </div>
+                <div class="profile-stat">
+                    <div id="leaderboard-rank" class="profile-stat-number">--</div>
+                    <div class="profile-stat-label">Your Rank</div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDWA-fiGiXOUp8QwPaldztN5cTQxWibghk",
+          authDomain: "myloginapp-212fb.firebaseapp.com",
+          projectId: "myloginapp-212fb",
+          storageBucket: "myloginapp-212fb.appspot.com",
+          messagingSenderId: "407662156233",
+          appId: "1:407662156233:web:d419bc320091e0e827018",
+          measurementId: "G-P5JY41QFSS"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const profileName = document.getElementById('profile-name');
+        const profileMeta = document.getElementById('profile-meta');
+        const totalPoints = document.getElementById('total-points');
+        const logoutBtn = document.getElementById('logout-btn');
+        const leaderboardRank = document.getElementById('leaderboard-rank');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in
+                const userProfileRef = doc(db, "profiles", user.uid);
+                
+                try {
+                    // 1. Get the current user's profile
+                    const userDocSnap = await getDoc(userProfileRef);
+                    if (!userDocSnap.exists()) {
+                        profileName.textContent = "Profile not found. Please register again.";
+                        return;
+                    }
+                    const userData = userDocSnap.data();
+                    
+                    // Populate profile with user data
+                    profileName.textContent = userData.username;
+                    totalPoints.textContent = userData.points || 0;
+                    
+                    const creationDate = new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    });
+
+                    profileMeta.innerHTML = `
+                        <span>${userData.email}</span> &nbsp; | &nbsp; 
+                        <span>${userData.college}</span> &nbsp; | &nbsp; 
+                        <span>Joined ${creationDate}</span>
+                    `;
+
+                    // 2. Calculate user's rank
+                    const profilesCollectionRef = collection(db, "profiles");
+                    const q = query(profilesCollectionRef, orderBy("points", "desc"));
+                    const allUsersSnapshot = await getDocs(q);
+
+                    let rank = 0;
+                    allUsersSnapshot.docs.forEach((doc, index) => {
+                        if (doc.id === user.uid) {
+                            rank = index + 1;
+                        }
+                    });
+
+                    if (rank > 0) {
+                        leaderboardRank.textContent = `#${rank}`;
+                    } else {
+                        leaderboardRank.textContent = "N/A";
+                    }
+
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                    profileName.textContent = "Error loading profile";
+                }
+            } else {
+                // User is signed out
+                window.location.href = 'registration.html';
+            }
+        });
+        
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                // The onAuthStateChanged listener will handle the redirect
+            } catch (error) {
+                console.error("Error signing out:", error);
+            }
+        });
+
+    </script>
+</body>
+</html>
+
